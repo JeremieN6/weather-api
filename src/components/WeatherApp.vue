@@ -13,21 +13,6 @@
                         <button class="btn btn-primary" v-on:click="submitCityName">Chercher</button>
                     </div>
                 </div>
-                <!-- <div class="" style="display: flex; flex-direction:row;">
-                    <div class="col-6">
-                        <label style="color: white;" for="ex3">col-xs-3</label>
-                        <i class="bi bi-search"></i>
-                        <input class="form-control" id="ex3" type="text">
-                        <div class="col-4 search_location_button">
-                            <button class="btn btn-primary btn-sm">Rechercher</button>
-                        </div>
-                    </div>
-                </div> -->
-                <!-- <a href="#">About</a>
-                <a href="#">Services</a>
-                <a href="#">Clients</a> 
-                <a href="#">Contact</a>-->
-
             </div>
             <!-- SIDE MENU -->
 
@@ -43,8 +28,11 @@
                 <div class="data_weather">
                     <img class="current_img_weather" src="../assets/images/Clear.png" alt="Current Weather">
                 
-                <div class="degree">
+                <div class="degree" id="degreeC">
                     <h2>{{cityCurrentTemp.temp_c}} <span>°C</span></h2>
+                </div>
+                <div class="degree" id="degreeF">
+                    <h2>{{cityCurrentTemp.temp_f}} <span>°F</span></h2>
                 </div>
                 <div class="weather_descr">
                     <p>{{cityCurrentText.text}}</p>
@@ -70,7 +58,7 @@
                     <div class="button_temperature_active" id="button_temperatureC" v-on:click="celsius">°C</div>
                     <div class="button_temperature_inactive" id="button_temperatureF" v-on:click="fahrenheit">°F</div>
                 </div>
-                <div class="weather_prediction"> <!-- -->
+                <div class="weather_prediction"> <!--v-for="item in currentCity" :key="currentCity" -->
                     <!-- Section 1 -->
                         <div class="card_details">
                             <div class="detailed_date">Lundi</div>
@@ -78,7 +66,7 @@
                                 <img class="detailed_img" src="../assets/images/LightCloud.png" alt="LightCloud">
                             </div>
                             <div class="temperature_day">
-                                <div class="temperature_morning">19°C</div>
+                                <div class="temperature_morning">30°C</div>
                                 <div class="temperature_afternoon">27°C</div>
                             </div>
                         </div>
@@ -142,8 +130,9 @@ export default {
     return{
       cityCurrentTemp: {},
       cityCurrentText: {},
-      currentCity: '',
+      currentCity: "",
       currentCityName: {},
+      isCelsuis: true,
     }
   },
   mounted(){
@@ -181,21 +170,35 @@ export default {
      celsius(){
         var celsius = document.getElementById("button_temperatureC");
         var fahrenheit = document.getElementById("button_temperatureF");
+        var dataFar = document.getElementById("degreeF");
+        var dataCel = document.getElementById("degreeC");
+        
         fahrenheit.classList.add("button_temperature_inactive");
         celsius.classList.add("button_temperature_active");
 
         fahrenheit.classList.remove("button_temperature_active");
         celsius.classList.remove("button_temperature_inactive");
 
+        dataFar.style.display = "none";
+        dataCel.style.display = "block";
+
     },
      fahrenheit(){
         var celsius = document.getElementById("button_temperatureC");
         var fahrenheit = document.getElementById("button_temperatureF");
+        var dataFar = document.getElementById("degreeF");
+        var dataCel = document.getElementById("degreeC");
+    
         fahrenheit.classList.add("button_temperature_active");
         celsius.classList.add("button_temperature_inactive");
 
         fahrenheit.classList.remove("button_temperature_inactive");
         celsius.classList.remove("button_temperature_active");
+
+        dataFar.style.display = "block";
+        dataCel.style.display = "none";
+
+
     },
     openNav() {
         document.getElementById("mySidenav").style.visibility = "visible";
@@ -349,6 +352,9 @@ span {
 }
 .degree{
     display: flex;
+}
+#degreeF{
+    display: none;
 }
 .weather_descr{
     color: #88869D;
@@ -578,6 +584,9 @@ footer{
     .mySidenav_disable{
         width: 0%;
     }
+    #degreeF{
+    display: none;
+}
 }
 @media screen and (min-width:1024px) {
     .header{
