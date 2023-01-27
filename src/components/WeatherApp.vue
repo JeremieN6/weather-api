@@ -129,6 +129,7 @@ export default {
   data(){
     return{
       cityCurrentTemp: {},
+      city:{},
       cityCurrentText: {},
       currentCity: "",
       currentCityName: {},
@@ -144,8 +145,8 @@ export default {
       this.currentCityName = response.data.location;
       this.cityCurrentTemp = response.data.current;
       this.cityCurrentText = response.data.current.condition;
-      console.log(this.cityCurrentTemp)
-      console.log(this.currentCityName)
+    //   console.log(this.cityCurrentTemp)
+    //   console.log(this.currentCityName)
     })
   },
   methods:{
@@ -163,7 +164,8 @@ export default {
            dayNumber)
     .then((response) =>{
       this.currentCity = response.data.forecast.forecastday;
-         console.log(this.cityCurrentTemp);
+      this.city = response.data.location;
+         console.log(this.city);
          console.log(this.currentCity);
     })
     },
@@ -557,7 +559,7 @@ footer{
 @media screen and (min-width:768px) {
     .header{
         width: 45%;
-        height: auto;
+        height: 100vh;
     }
     .weather_app{
         display: flex;
@@ -566,6 +568,7 @@ footer{
     .content {
         background-color: #100E1D;
         width: 55%;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
