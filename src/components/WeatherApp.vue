@@ -141,6 +141,7 @@ export default {
         currentCityName: {},
         isCelsuis: true,
 
+        VUE_APP_SERVICE_URL_FULL:process.env.VUE_APP_SERVICE_URL_FULL,
         testCurrentCityName:{},
         currentCityTemp:{},
         currentCityTempDescription:{},
@@ -161,13 +162,12 @@ export default {
   },
   methods:{
     submitCityName(){
-    var apiKey = "056e3720f3ba46a2961185008220507";
+    // var apiKey = "056e3720f3ba46a2961185008220507";
     var cityInserted = this.currentCity;
     var dayNumber = 5;
         axios
     .get(
-      `https://api.weatherapi.com/v1/forecast.json?key=` +
-           apiKey +
+      this.VUE_APP_SERVICE_URL_FULL +
            `&q=` +
            cityInserted +
            `&days=` +
