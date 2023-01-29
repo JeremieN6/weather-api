@@ -26,27 +26,27 @@
                     <img class="bg-img-default" src="../assets/images/Cloud-background.png" alt="Cloud-background">
                 </div>
                 <div class="data_weather">
-                    <img class="current_img_weather" src="../assets/images/Clear.png" alt="Current Weather">
+                    <img class="current_img_weather" :src="testCurrentCityTempDescr.icon" alt="Current Weather">
                 
                 <div class="degree" id="degreeC">
-                    <h2>{{cityCurrentTemp.temp_c}} <span>°C</span></h2>
+                    <h2>{{testCityCurrentTemp.temp_c}} <span>°C</span></h2>
                 </div>
                 <div class="degree" id="degreeF">
-                    <h2>{{cityCurrentTemp.temp_f}} <span>°F</span></h2>
+                    <h2>{{testCityCurrentTemp.temp_f}} <span>°F</span></h2>
                 </div>
                 <div class="weather_descr">
-                    <p>{{cityCurrentText.text}}</p>
+                    <p>{{testCurrentCityTempDescr.text}}</p>
                 </div>
                 <div class="target_date">
                     <div class="date">Aujourd'hui</div>
                     <div class="date_space">•</div>
-                    <div class="full_date">26 Janv 2023</div>
+                    <div class="full_date">{{testCityCurrentTemp.last_updated}}</div>
                 </div>
                 <div class="target_city">
                     <div class="icon_target_city">
                         <i class="bi bi-geo-alt"></i>
                     </div> 
-                    <div class="targeted_city">{{currentCityName.name}}</div>
+                    <div class="targeted_city">{{testCurrentCityName.name}}</div>
                 </div>
                 </div>
             </div>
@@ -60,15 +60,19 @@
                 </div>
                 <div class="weather_prediction"> <!--v-for="item in currentCity" :key="currentCity" -->
                     <!-- Section 1 -->
-                        <div class="card_details">
-                            <div class="detailed_date">Lundi</div>
+                        <div class="card_details" v-for="item in testCurrentCity5DaysTemp" :key="item">
+                            <div class="detailed_date">{{item.date}}</div>
                             <div class="card_detail_img">
                                 <img class="detailed_img" src="../assets/images/LightCloud.png" alt="LightCloud">
                             </div>
-                            <div class="temperature_day">
-                                <div class="temperature_morning">30°C</div>
-                                <div class="temperature_afternoon">27°C</div>
+                            <div class="temperature_day" id="celFor5Days">
+                                    <div class="temperature_morning" id="nextDaysAMTempC">{{item.day.mintemp_c}}°C</div>
+                                    <div class="temperature_afternoon" id="nextDaysPMTempC">{{item.day.maxtemp_c}}°C</div>
                             </div>
+                            <!-- <div class="temperature_day" id="faraFor5Days"> /* NEXT UPDATE*/ */
+                                <div class="temperature_morning" id="nextDaysAMTempF">{{item.day.mintemp_f}}°F</div>
+                                <div class="temperature_afternoon" id="nextDaysPMTempF">{{item.day.maxtemp_f}}°F</div>
+                            </div> -->
                         </div>
                     <!-- Section 1 -->
                 </div>
@@ -83,14 +87,16 @@
                         <div class="highlights_cards">
                             <div class="highlights_status">
                                 <div class="hl_Wind">Etat du Vent</div>
-                                <div class="hl_WindValue">92<span>Km/H</span> </div>
-                                <div class="hl_WindDirection">{{cityCurrentTemp.wind_dir}}</div>
+                                <div class="hl_WindValue">
+                                    {{testCityCurrentTemp.wind_kph}}<span>Km/H</span> 
+                                </div>
+                                <div class="hl_WindDirection">{{testCityCurrentTemp.wind_dir}}</div>
                             </div>
                         </div>
                         <div class="highlights_cards">
                             <div class="highlights_status">
                                 <div class="hl_Humidity">Humidité</div>
-                                <div class="hl_WindValue">{{cityCurrentTemp.humidity}}<span>%</span> </div>
+                                <div class="hl_WindValue">{{testCityCurrentTemp.humidity}}<span>%</span> </div>
                                 <div class="d-flex flex-column w-50">
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="69" aria-valuemin="0" aria-valuemax="100" style="width: 69%; background-color: #FFEC65;">
@@ -102,13 +108,13 @@
                         <div class="highlights_cards">
                             <div class="highlights_status">
                                 <div class="hl_Wind">Visibility</div>
-                                <div class="hl_WindValue">{{cityCurrentTemp.vis_km}}<span>Km</span> </div>
+                                <div class="hl_WindValue">{{testCityCurrentTemp.vis_km}}<span>Km</span> </div>
                             </div>
                         </div>
                         <div class="highlights_cards">
                             <div class="highlights_status">
                                 <div class="hl_Wind">Pression de l'air</div>
-                                <div class="hl_WindValue">{{cityCurrentTemp.pressure_mb}}<span>mb</span> </div>
+                                <div class="hl_WindValue">{{testCityCurrentTemp.pressure_mb}}<span>mb</span> </div>
                             </div>
                         </div>
                     </div>
@@ -134,6 +140,11 @@ export default {
       currentCity: "",
       currentCityName: {},
       isCelsuis: true,
+
+      testCurrentCityName:{},
+      testCityCurrentTemp:{},
+      testCurrentCityTempDescr:{},
+      testCurrentCity5DaysTemp:{},
     }
   },
   mounted(){
@@ -145,16 +156,27 @@ export default {
       this.currentCityName = response.data.location;
       this.cityCurrentTemp = response.data.current;
       this.cityCurrentText = response.data.current.condition;
-    //   console.log(this.cityCurrentTemp)
-    //   console.log(this.currentCityName)
     })
   },
   methods:{
     submitCityName(){
-        var apiKey = "056e3720f3ba46a2961185008220507";
-        var cityInserted = this.currentCity;
-        var dayNumber = 3;
+    var apiKey = "056e3720f3ba46a2961185008220507";
+    var cityInserted = this.currentCity;
+    var dayNumber = 3;
     axios
+    .get(
+      `https://api.weatherapi.com/v1/current.json?key=` +
+           apiKey +
+           `&q=` +
+           cityInserted)
+    .then((response) =>{
+        this.testCurrentCityName = response.data.location;
+        this.testCityCurrentTemp = response.data.current;
+        this.testCurrentCityTempDescr = response.data.current.condition;
+         console.log(this.testCurrentCityName);
+         console.log(this.testCityCurrentTemp);
+    })
+        axios
     .get(
       `https://api.weatherapi.com/v1/forecast.json?key=` +
            apiKey +
@@ -163,17 +185,21 @@ export default {
            `&days=` +
            dayNumber)
     .then((response) =>{
-      this.currentCity = response.data.forecast.forecastday;
-      this.city = response.data.location;
-         console.log(this.city);
-         console.log(this.currentCity);
+      this.testCurrentCity5DaysTemp = response.data.forecast.forecastday;
+         console.log(this.testCurrentCity5DaysTemp);
     })
+    },
+    updateData(event) {
+      event.preventDefault()
+      this.$set(this, 'currentCity', this.currentCity)
     },
      celsius(){
         var celsius = document.getElementById("button_temperatureC");
         var fahrenheit = document.getElementById("button_temperatureF");
         var dataFar = document.getElementById("degreeF");
         var dataCel = document.getElementById("degreeC");
+        // var faraFor5Days = document.getElementById("faraFor5Days");
+        // var celFor5Days = document.getElementById("celFor5Days");
         
         fahrenheit.classList.add("button_temperature_inactive");
         celsius.classList.add("button_temperature_active");
@@ -184,12 +210,18 @@ export default {
         dataFar.style.display = "none";
         dataCel.style.display = "block";
 
+        // faraFor5Days.style.display = "none";
+        // celFor5Days.style.display = "block";
+
     },
      fahrenheit(){
         var celsius = document.getElementById("button_temperatureC");
         var fahrenheit = document.getElementById("button_temperatureF");
         var dataFar = document.getElementById("degreeF");
         var dataCel = document.getElementById("degreeC");
+        // var faraFor5Days = document.getElementById("faraFor5Days");
+        // var celFor5Days = document.getElementById("celFor5Days");
+
     
         fahrenheit.classList.add("button_temperature_active");
         celsius.classList.add("button_temperature_inactive");
@@ -200,7 +232,8 @@ export default {
         dataFar.style.display = "block";
         dataCel.style.display = "none";
 
-
+        // faraFor5Days.style.display = "block";
+        // celFor5Days.style.display = "none";
     },
     openNav() {
         document.getElementById("mySidenav").style.visibility = "visible";
@@ -214,6 +247,10 @@ export default {
             }
     },
     closeNav() {
+        document.getElementById("mySidenav").style.visibility = "hidden";
+        document.getElementById("mySidenav").style.opacity = 0;
+    },
+    submitStyle(){
         document.getElementById("mySidenav").style.visibility = "hidden";
         document.getElementById("mySidenav").style.opacity = 0;
     }
@@ -345,9 +382,11 @@ span {
     justify-content: center;
     flex-direction: column;
     /* flex-direction: row; */
+    position: absolute;
     align-items: center;
     /* z-index: 1; */
-    margin-top: -11em;
+    margin-top: -10em;
+    width: 100%;
 }
 .current_img_weather{
    width: 40%;
@@ -355,7 +394,7 @@ span {
 .degree{
     display: flex;
 }
-#degreeF{
+#degreeF,#faraFor5Days{
     display: none;
 }
 .weather_descr{
@@ -543,6 +582,9 @@ footer{
 @media screen and (max-height: 450px) {
 .sidenav {padding-top: 15px;}
 .sidenav a {font-size: 18px;}
+.data_weather{
+    margin-top: -15em;
+}
 }
 @media (min-width:320px) and (max-width:767px){
 
@@ -559,16 +601,27 @@ footer{
 @media screen and (min-width:768px) {
     .header{
         width: 45%;
-        height: 100vh;
+        height: auto;
     }
     .weather_app{
         display: flex;
         flex-direction: row;
     }
+    .data_weather {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        /* flex-direction: row; */
+        position: absolute;
+        align-items: center;
+        /* z-index: 1; */
+        margin-top: -5em;
+        width: 35%;
+    }
     .content {
         background-color: #100E1D;
         width: 55%;
-        height: 100vh;
+        height: auto;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
@@ -594,6 +647,7 @@ footer{
 @media screen and (min-width:1024px) {
     .header{
         width: 35%;
+        height: auto;
     }
     .content {
         background-color: #100E1D;
@@ -601,6 +655,7 @@ footer{
         display: flex;
         flex-direction: column;
         justify-content: space-around;
+        height: auto;
     }
     .highlights_cards{
         display: flex;
