@@ -26,21 +26,21 @@
                     <img class="bg-img-default" src="../assets/images/Cloud-background.png" alt="Cloud-background">
                 </div>
                 <div class="data_weather">
-                    <img class="current_img_weather" :src="testCurrentCityTempDescr.icon" alt="Current Weather">
+                    <img class="current_img_weather" :src="currentCityTempDescription.icon" alt="Current Weather">
                 
                 <div class="degree" id="degreeC">
-                    <h2>{{testCityCurrentTemp.temp_c}} <span>°C</span></h2>
+                    <h2>{{currentCityTemp.temp_c}} <span>°C</span></h2>
                 </div>
                 <div class="degree" id="degreeF">
-                    <h2>{{testCityCurrentTemp.temp_f}} <span>°F</span></h2>
+                    <h2>{{currentCityTemp.temp_f}} <span>°F</span></h2>
                 </div>
                 <div class="weather_descr">
-                    <p>{{testCurrentCityTempDescr.text}}</p>
+                    <p>{{currentCityTempDescription.text}}</p>
                 </div>
                 <div class="target_date">
                     <div class="date">Aujourd'hui</div>
                     <div class="date_space">•</div>
-                    <div class="full_date">{{testCityCurrentTemp.last_updated}}</div>
+                    <div class="full_date">{{currentCityTemp.last_updated}}</div>
                 </div>
                 <div class="target_city">
                     <div class="icon_target_city">
@@ -60,7 +60,7 @@
                 </div>
                 <div class="weather_prediction"> <!--v-for="item in currentCity" :key="currentCity" -->
                     <!-- Section 1 -->
-                        <div class="card_details" v-for="item in testCurrentCity5DaysTemp" :key="item">
+                        <div class="card_details" v-for="item in currentCityWeekTemp" :key="item">
                             <div class="detailed_date">{{item.date}}</div>
                             <div class="card_detail_img">
                                 <img class="detailed_img" src="../assets/images/LightCloud.png" alt="LightCloud">
@@ -88,15 +88,15 @@
                             <div class="highlights_status">
                                 <div class="hl_Wind">Etat du Vent</div>
                                 <div class="hl_WindValue">
-                                    {{testCityCurrentTemp.wind_kph}}<span>Km/H</span> 
+                                    {{currentCityTemp.wind_kph}}<span>Km/H</span> 
                                 </div>
-                                <div class="hl_WindDirection">{{testCityCurrentTemp.wind_dir}}</div>
+                                <div class="hl_WindDirection">Direction du vent : {{currentCityTemp.wind_dir}}</div>
                             </div>
                         </div>
                         <div class="highlights_cards">
                             <div class="highlights_status">
                                 <div class="hl_Humidity">Humidité</div>
-                                <div class="hl_WindValue">{{testCityCurrentTemp.humidity}}<span>%</span> </div>
+                                <div class="hl_WindValue">{{currentCityTemp.humidity}}<span>%</span> </div>
                                 <div class="d-flex flex-column w-50">
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="69" aria-valuemin="0" aria-valuemax="100" style="width: 69%; background-color: #FFEC65;">
@@ -108,13 +108,13 @@
                         <div class="highlights_cards">
                             <div class="highlights_status">
                                 <div class="hl_Wind">Visibility</div>
-                                <div class="hl_WindValue">{{testCityCurrentTemp.vis_km}}<span>Km</span> </div>
+                                <div class="hl_WindValue">{{currentCityTemp.vis_km}}<span>Km</span> </div>
                             </div>
                         </div>
                         <div class="highlights_cards">
                             <div class="highlights_status">
                                 <div class="hl_Wind">Pression de l'air</div>
-                                <div class="hl_WindValue">{{testCityCurrentTemp.pressure_mb}}<span>mb</span> </div>
+                                <div class="hl_WindValue">{{currentCityTemp.pressure_mb}}<span>mb</span> </div>
                             </div>
                         </div>
                     </div>
@@ -134,20 +134,21 @@ export default {
   name: 'WeatherApp',
   data(){
     return{
-      cityCurrentTemp: {},
-      city:{},
-      cityCurrentText: {},
-      currentCity: "",
-      currentCityName: {},
-      isCelsuis: true,
+        cityCurrentTemp: {},
+        city:{},
+        cityCurrentText: {},
+        currentCity: "",
+        currentCityName: {},
+        isCelsuis: true,
 
-      testCurrentCityName:{},
-      testCityCurrentTemp:{},
-      testCurrentCityTempDescr:{},
-      testCurrentCity5DaysTemp:{},
+        testCurrentCityName:{},
+        currentCityTemp:{},
+        currentCityTempDescription:{},
+        currentCityWeekTemp:{},
     }
   },
   mounted(){
+    //Next Update : Try to show a city Temparature by default
     var cityInserted = "Ajaccio";
     var apiKey = "056e3720f3ba46a2961185008220507";
     axios
@@ -162,20 +163,7 @@ export default {
     submitCityName(){
     var apiKey = "056e3720f3ba46a2961185008220507";
     var cityInserted = this.currentCity;
-    var dayNumber = 3;
-    axios
-    .get(
-      `https://api.weatherapi.com/v1/current.json?key=` +
-           apiKey +
-           `&q=` +
-           cityInserted)
-    .then((response) =>{
-        this.testCurrentCityName = response.data.location;
-        this.testCityCurrentTemp = response.data.current;
-        this.testCurrentCityTempDescr = response.data.current.condition;
-         console.log(this.testCurrentCityName);
-         console.log(this.testCityCurrentTemp);
-    })
+    var dayNumber = 5;
         axios
     .get(
       `https://api.weatherapi.com/v1/forecast.json?key=` +
@@ -185,8 +173,13 @@ export default {
            `&days=` +
            dayNumber)
     .then((response) =>{
-      this.testCurrentCity5DaysTemp = response.data.forecast.forecastday;
-         console.log(this.testCurrentCity5DaysTemp);
+        //3 vatiables to display a single data
+        this.testCurrentCityName = response.data.location;
+        this.currentCityTemp = response.data.current;
+        this.currentCityTempDescription = response.data.current.condition;
+        //New variable to only Display Week Temperature on a vue loop
+        this.currentCityWeekTemp = response.data.forecast.forecastday;
+         console.log(this.currentCityWeekTemp);
     })
     },
     updateData(event) {
