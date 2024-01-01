@@ -150,9 +150,6 @@ export default {
     }
   },
   mounted(){
-    //Next Update : Try to show a city Temparature by default
-    // Appel à la méthode pour charger les données de la ville par défaut
-    this.loadDefaultCityData();
     var cityInserted = "Malé";
     var apiKey = "056e3720f3ba46a2961185008220507";
     axios
@@ -161,6 +158,7 @@ export default {
       this.currentCityName = response.data.location;
       this.cityCurrentTemp = response.data.current;
       this.cityCurrentText = response.data.current.condition;
+    // Appel à la méthode pour charger les données de la ville par défaut
       this.loadDefaultCityData();
     })
   },
