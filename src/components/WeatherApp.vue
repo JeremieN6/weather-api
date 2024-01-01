@@ -139,6 +139,7 @@ export default {
         cityCurrentText: {},
         currentCity: "",
         currentCityName: {},
+        currentCityWeekTemp: [],
         isCelsuis: true,
 
         VUE_APP_SERVICE_URL_FULL:process.env.VUE_APP_SERVICE_URL_FULL,
@@ -160,12 +161,13 @@ export default {
       this.currentCityName = response.data.location;
       this.cityCurrentTemp = response.data.current;
       this.cityCurrentText = response.data.current.condition;
+      this.loadDefaultCityData();
     })
   },
   methods:{
     loadDefaultCityData() {
-      // Remplacez "Ajaccio" par la ville de votre choix
-      var cityInserted = "Ajaccio";
+      // Remplacez "Malé" par la ville de votre choix pour avoir une ville part défaut
+      var cityInserted = "Malé";
       var apiKey = "056e3720f3ba46a2961185008220507";
       
       // Utilisez l'API pour obtenir les données de la ville par défaut
@@ -183,6 +185,7 @@ export default {
 
     submitCityName(){
     // var apiKey = "056e3720f3ba46a2961185008220507";
+    this.currentCityWeekTemp
     var cityInserted = this.currentCity;
     var dayNumber = 5;
         axios
