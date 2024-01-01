@@ -164,6 +164,9 @@ export default {
   },
   methods:{
     loadDefaultCityData() {
+      // Remplacez "Ajaccio" par la ville de votre choix
+      var cityInserted = "Ajaccio";
+      var apiKey = "056e3720f3ba46a2961185008220507";
       
       // Utilisez l'API pour obtenir les données de la ville par défaut
       axios
