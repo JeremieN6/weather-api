@@ -150,7 +150,9 @@ export default {
   },
   mounted(){
     //Next Update : Try to show a city Temparature by default
-    var cityInserted = "Ajaccio";
+    // Appel à la méthode pour charger les données de la ville par défaut
+    this.loadDefaultCityData();
+    var cityInserted = "Malé";
     var apiKey = "056e3720f3ba46a2961185008220507";
     axios
     .get(`https://api.weatherapi.com/v1/current.json?key=` + apiKey + `&q=` + cityInserted)
@@ -161,6 +163,21 @@ export default {
     })
   },
   methods:{
+    loadDefaultCityData() {
+      
+      // Utilisez l'API pour obtenir les données de la ville par défaut
+      axios
+        .get(`https://api.weatherapi.com/v1/current.json?key=` + apiKey + `&q=` + cityInserted)
+        .then((response) => {
+          this.currentCityName = response.data.location;
+          this.cityCurrentTemp = response.data.current;
+          this.cityCurrentText = response.data.current.condition;
+        })
+        .catch((error) => {
+          console.error("Erreur lors du chargement des données de la ville par défaut:", error);
+        });
+    },
+
     submitCityName(){
     // var apiKey = "056e3720f3ba46a2961185008220507";
     var cityInserted = this.currentCity;
