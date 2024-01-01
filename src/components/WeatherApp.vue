@@ -139,7 +139,7 @@ export default {
         cityCurrentText: {},
         currentCity: "",
         currentCityName: {},
-        currentCityWeekTemp: [],
+        currentCityWeekTemp2: [],
         isCelsuis: true,
 
         VUE_APP_SERVICE_URL_FULL:process.env.VUE_APP_SERVICE_URL_FULL,
